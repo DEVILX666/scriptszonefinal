@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, ReactElement } from "react"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
@@ -40,6 +40,128 @@ const difficultyConfig = {
 const translateDifficulty = (difficulty: string, language: string): string => {
   const key = difficulty.toLowerCase().replace(" ", "_")
   return getTranslation(language, key)
+}
+
+// Map of "premium scripts" phrases in different languages (matching the actual translations)
+const premiumScriptsPhrases: Record<string, string[]> = {
+  en: ["premium scripts"],
+  es: ["scripts premium"],
+  fr: ["scripts premium"],
+  de: ["Premium-Skripte"],
+  pt: ["scripts premium"],
+  it: ["script premium"],
+  ru: ["премиум-скрипты"],
+  ja: ["プレミアムスクリプト"],
+  zh: ["高级脚本"],
+  ar: ["البرامج النصية المميزة"],
+  ko: ["프리미엄 스크립트"],
+  th: ["สคริปต์พรีเมียม"],
+  vi: ["tập lệnh premium"],
+  id: ["skrip premium"],
+  pl: ["skrypty premium"],
+  tr: ["premium komut dosyaları"],
+  nl: ["premium scripts"],
+  sv: ["premium-skript"],
+  da: ["premium-scripts"],
+  no: ["premium-skript"],
+  fi: ["premium-skriptit"],
+  cs: ["prémiové skripty"],
+  hu: ["premium szkriptek"],
+  ro: ["scripturile premium"],
+  el: ["premium scripts"],
+  he: ["סקריפטים פרימיום"],
+  hi: ["प्रीमियम स्क्रिप्ट"],
+  uk: ["преміум-скрипти"],
+  sk: ["prémiové skripty"],
+  sl: ["premium skripte"],
+  hr: ["premium skripte"],
+  sr: ["премијум скрипте"],
+  bg: ["премиум скриптове"],
+  mk: ["премиум скрипти"],
+  sq: ["skriptat premium"],
+  et: ["premium skriptid"],
+  lv: ["premium skriptus"],
+  lt: ["premium scenarijus"],
+  ga: ["scripteanna premium"],
+  cy: ["sgriptiau premium"],
+  mt: ["skripts premium"],
+  is: ["premium-handrit"],
+  af: ["premium-skrifte"],
+  sw: ["hati za premium"],
+  zu: ["izinhlelo zokusebenza zepremiyamu"],
+  xh: ["izinhlelo zokusebenza zepremiyamu"],
+  ny: ["zolembedza zapremiyamu"],
+  mg: ["script premium"],
+  ti: ["ፕሪሚየም ስክሪፕቶች"],
+  or: ["ପ୍ରିମିୟମ ସ୍କ୍ରିପ୍ଟ"],
+  pa: ["ਪ੍ਰੀਮੀਅਮ ਸਕ੍ਰਿਪਟ"],
+  bn: ["প্রিমিয়াম স্ক্রিপ্ট"],
+  ta: ["பிரீமியம் ஸ்கிரிப்ட்கள்"],
+  te: ["ప్రీమియం స్క్రిప్ట్‌లు"],
+  ml: ["പ്രിമിയം സ്ക്രിപ്റ്റുകൾ"],
+  kn: ["ಪ್ರೀಮಿಯಂ ಸ್ಕ್ರಿಪ್ಟ್‌ಗಳು"],
+  gu: ["પ્રીમિયમ સ્ક્રિપ્ટ્સ"],
+  mr: ["प्रीमियम स्क्रिप्ट्स"],
+  si: ["ප්‍රිමියම් ස්ක්‍රිප්ට්"],
+  my: ["ပရီမီယံ စာသားများ"],
+  km: ["ស្គ្រីប ប្រិមីយ៉ូម"],
+  lo: ["ສະຄິບ ພຣີມຽມ"],
+}
+
+// Function to highlight premium scripts text with gold effect
+const highlightPremiumScripts = (text: string, language: string): ReactElement => {
+  const phrases = premiumScriptsPhrases[language] || premiumScriptsPhrases.en
+  let result: (string | ReactElement)[] = [text]
+  
+  for (const phrase of phrases) {
+    const escapedPhrase = phrase.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+    const regex = new RegExp(`(${escapedPhrase})`, "gi")
+    const newParts: (string | ReactElement)[] = []
+    let keyIndex = 0
+    
+    result.forEach((part) => {
+      if (typeof part === "string") {
+        const matches = [...part.matchAll(regex)]
+        if (matches.length === 0) {
+          newParts.push(part)
+        } else {
+          let lastIndex = 0
+          matches.forEach((match) => {
+            if (match.index !== undefined) {
+              // Add text before match
+              if (match.index > lastIndex) {
+                newParts.push(part.substring(lastIndex, match.index))
+              }
+              // Add highlighted match
+              newParts.push(
+                <span
+                  key={`highlight-${keyIndex++}`}
+                  style={{
+                    color: "#ffcc00",
+                    textShadow: "0 0 6px #ffcc00, 0 0 12px rgba(255,204,0,0.7)",
+                    animation: "goldBlink 1.2s infinite",
+                  }}
+                >
+                  {match[0]}
+                </span>
+              )
+              lastIndex = match.index + match[0].length
+            }
+          })
+          // Add remaining text
+          if (lastIndex < part.length) {
+            newParts.push(part.substring(lastIndex))
+          }
+        }
+      } else {
+        newParts.push(part)
+      }
+    })
+    
+    result = newParts
+  }
+  
+  return <>{result}</>
 }
 
 export function OfferOverlay({ isOpen, onClose, gameName, gameLogo, onOfferComplete }: OfferOverlayProps) {
@@ -130,7 +252,7 @@ export function OfferOverlay({ isOpen, onClose, gameName, gameLogo, onOfferCompl
               </div>
               <div>
                 <p className="text-base font-semibold text-foreground">
-                  {getTranslation(language, "complete_2_easy_tasks")}
+                  {highlightPremiumScripts(getTranslation(language, "complete_2_easy_tasks"), language)}
                 </p>
               </div>
             </div>
