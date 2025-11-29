@@ -130,16 +130,7 @@ export function OfferOverlay({ isOpen, onClose, gameName, gameLogo, onOfferCompl
               </div>
               <div>
                 <p className="text-base font-semibold text-foreground">
-                  {getTranslation(language, "complete_1_task")}{" "}
-                  <span
-                    style={{
-                      color: "#ffcc00",
-                      textShadow: "0 0 6px #ffcc00, 0 0 12px rgba(255,204,0,0.7)",
-                      animation: "goldBlink 1.2s infinite",
-                    }}
-                  >
-                    Premium Scripts
-                  </span>
+                  {getTranslation(language, "complete_2_easy_tasks")}
                 </p>
               </div>
             </div>
