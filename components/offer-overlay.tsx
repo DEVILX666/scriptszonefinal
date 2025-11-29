@@ -69,7 +69,7 @@ export function OfferOverlay({ isOpen, onClose, gameName, gameLogo, onOfferCompl
     try {
       const userIP = await getUserIP()
       const userAgent = typeof window !== "undefined" ? navigator.userAgent : "Mozilla/5.0"
-      const response = await fetchOffers(userIP, userAgent, 1)
+      const response = await fetchOffers(userIP, userAgent, 3)
 
       if (response && response.success) {
         setOffers(response.offers || [])
